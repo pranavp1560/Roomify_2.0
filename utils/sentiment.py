@@ -3,7 +3,10 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 # Make sure this is downloaded once during setup
 # nltk.download("vader_lexicon")
-
+try:
+    nltk.data.find('sentiment/vader_lexicon')
+except LookupError:
+    nltk.download('vader_lexicon')
 sia = SentimentIntensityAnalyzer()
 
 def analyze_sentiment(review_text, rating=None):
