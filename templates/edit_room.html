@@ -4,86 +4,150 @@
 {% block extra_css %}
 <style>
   .profile-page {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 30px;
-  }
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 15px;
+}
 
-  .profile-header h1 {
-    color: #5c3d2e;
-    font-size: 2rem;
-    margin-bottom: 20px;
+.profile-header h1 {
+  color: #5c3d2e;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.profile-card {
+  background: linear-gradient(135deg, #fff, #fdf4ef);
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+/* =========================
+   GRID SYSTEM
+========================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Make full width for textarea */
+.form-group textarea {
+  width: 100%;
+}
+
+/* =========================
+   INPUT STYLING
+========================= */
+label { 
+  font-weight: 600; 
+  color: #5c3d2e; 
+  margin-bottom: 6px; 
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1b7a3;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #ce9a78;
+  box-shadow: 0 0 6px rgba(206, 154, 120, 0.5);
+  outline: none;
+}
+
+textarea { 
+  resize: none; 
+  min-height: 90px; 
+}
+
+/* =========================
+   CHECKBOX SECTION
+========================= */
+.checkbox-section {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  background: #fffdf9;
+  border: 1px solid #f1dec9;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn-submit {
+  display: block;
+  margin: 25px auto 0;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #ce9a78, #b97a56);
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit:hover { 
+  transform: translateY(-3px) scale(1.03); 
+}
+
+/* =========================
+   📱 MOBILE (VERY IMPORTANT)
+========================= */
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 20px 10px;
   }
 
   .profile-card {
-    background: linear-gradient(135deg, #fff, #fdf4ef);
-    border-radius: 16px;
-    padding: 30px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-    text-align: left;
+    padding: 20px;
   }
 
   .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1fr;   /* 🔥 single column */
   }
 
-  label { 
-    font-weight: 600; 
-    color: #5c3d2e; 
-    margin-bottom: 6px; 
-  }
-
-  input, select, textarea {
-    padding: 12px;
-    border: 1px solid #d1b7a3;
-    border-radius: 10px;
-    background: #fff;
-    font-size: 0.95rem;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: #ce9a78;
-    box-shadow: 0 0 6px rgba(206, 154, 120, 0.5);
-    outline: none;
-  }
-
-  textarea { 
-    resize: none; 
-    min-height: 90px; 
-  }
-
-  .checkbox-section {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 12px;
-    background: #fffdf9;
-    border: 1px solid #f1dec9;
+  .profile-header h1 {
+    font-size: 1.5rem;
   }
 
   .checkbox-group {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 8px;
+    grid-template-columns: 1fr;   /* stack checkboxes */
   }
 
   .btn-submit {
-    display: block;
-    margin: 25px auto 0;
-    padding: 14px 28px;
-    background: linear-gradient(135deg, #ce9a78, #b97a56);
-    border-radius: 10px;
-    color: #fff;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.3s, background 0.3s;
+    width: 100%;
+  }
+}
+
+/* =========================
+   📱 SMALL MOBILE
+========================= */
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 15px;
+    border-radius: 12px;
   }
 
-  .btn-submit:hover { 
-    transform: translateY(-3px) scale(1.03); 
+  input, select, textarea {
+    font-size: 0.9rem;
+    padding: 10px;
   }
+}
 </style>
 {% endblock %}
 
