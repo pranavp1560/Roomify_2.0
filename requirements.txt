@@ -28,5 +28,5 @@ Werkzeug==3.0.1
 
 nltk==3.9.1
 matplotlib
-cv2
+
 
