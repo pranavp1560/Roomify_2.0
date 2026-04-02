@@ -12,7 +12,7 @@ from datetime import datetime
 import base64, io, os
 from PIL import Image
 import numpy as np
-import cv2
+
 
 # ===========================
 # NEW DB IMPORTS (correct)
