@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, request, session, flash, redirect, url_for, jsonify
 from bson.objectid import ObjectId
-from pyzbar.pyzbar import decode
 from PIL import Image
 from io import BytesIO
 import cloudinary
