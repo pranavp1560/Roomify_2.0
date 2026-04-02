@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Student Home{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Sidebar Toggle -->
+<button class="sidebar-toggle" onclick="toggleSidebar()">👤</button>
+
+<!-- Overlay -->
+<div id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="profile">
+    <img src="{{ url_for('static', filename='img/profile.png') }}" alt="Profile">
+    <h2>Welcome, {{ user.name }}</h2>
+  </div>
+
+  <div class="sidebar-menu">
+    <a href="{{ url_for('student.dashboard') }}">🏠 Dashboard</a>
+  </div>
+
+  <div class="filters">
+    <h3>Filters</h3>
+    <form id="filterForm" method="GET" action="{{ url_for('student.search') }}">
+
+      <label>
+        <input type="checkbox" name="type" value="room"
+        {% if 'room' in request.args.getlist('type') %}checked{% endif %}>
+        Rooms
+      </label><br>
+
+      <label>
+        <input type="checkbox" name="type" value="mess"
+        {% if 'mess' in request.args.getlist('type') %}checked{% endif %}>
+        Mess
+      </label><br>
+
+      <label>
+        <input type="checkbox" name="price" value="below2000"
+        {% if 'below2000' in request.args.getlist('price') %}checked{% endif %}>
+        Price below ₹2000
+      </label><br>
+
+      <label>
+        <input type="checkbox" name="price" value="above2000"
+        {% if 'above2000' in request.args.getlist('price') %}checked{% endif %}>
+        Price above ₹2000
+      </label>
+
+    </form>
+  </div>
+
+  <div class="logout">
+    <a href="/logout" class="btn-logout">Logout</a>
+  </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <section class="hero">
+    <h2>Welcome, {{ user.name }} 👋</h2>
+
+    <form method="GET" action="{{ url_for('student.search') }}" class="search-box">
+      <input type="text" name="q" placeholder="Search for rooms or messes..."
+      value="{{ request.args.get('q', '') }}">
+      <button type="submit">🔍</button>
+    </form>
+  </section>
+
+
+  <section class="featured">
+
+    <h2>Available Rooms</h2>
+
+    <div class="grid">
+
+      {% for room in rooms %}
+      <div class="card">
+
+        {% if room.images and room.images[0] %}
+        <img src="{{ room.images[0] }}">
+        {% else %}
+        <img src="{{ url_for('static', filename='img/room.jpg') }}">
+        {% endif %}
+
+        <div class="card-body">
+          <h4>{{ room.name }}</h4>
+          <p><strong>Rent:</strong> ₹{{ room.rent }}</p>
+          <p><strong>Address:</strong> {{ room.address }}</p>
+          <p><strong>For:</strong> {{ room.for_gender }}</p>
+
+          <a href="{{ url_for('room_details', room_id=room._id) }}" class="btn">
+            View Details
+          </a>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+
+    <h2 style="margin-top:40px;">Available Mess</h2>
+
+    <div class="grid">
+
+      {% for m in messes %}
+      <div class="card">
+
+        {% if m.images and m.images[0] %}
+        <img src="{{ m.images[0] }}">
+        {% else %}
+        <img src="{{ url_for('static', filename='img/mess.jpg') }}">
+        {% endif %}
+
+        <div class="card-body">
+          <h4>{{ m.name }}</h4>
+          <p><strong>Type:</strong> {{ m.type }}</p>
+          <p><strong>Monthly Charge:</strong> ₹{{ m.monthly_charge }}</p>
+          <p><strong>For:</strong> {{ m.for_gender }}</p>
+
+          <a href="{{ url_for('mess_details', mess_id=m._id) }}" class="btn">
+            View Details
+          </a>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<script>
+
+document.querySelectorAll('.filters input[type="checkbox"]').forEach(cb=>{
+  cb.addEventListener('change',()=>{
+    document.getElementById('filterForm').submit();
+  });
+});
+
+
+function toggleSidebar(){
+
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
+
+sidebar.classList.toggle("open");
+overlay.classList.toggle("active");
+
+}
+
+function closeSidebar(){
+
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
+
+sidebar.classList.remove("open");
+overlay.classList.remove("active");
+
+}
+
+</script>
+
+{% endblock %}

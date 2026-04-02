@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+<h1>👋 Welcome {{ user.name }}</h1>
+
+<div class="card">
+
+<h2>👤 Profile</h2>
+
+<p><b>Name:</b> {{ user.student_info.name }}</p>
+<p><b>Mobile:</b> {{ user.student_info.mobile }}</p>
+<p><b>College:</b> {{ user.student_info.college }}</p>
+
+<a href="{{ url_for('student.profile') }}" class="btn">Edit Profile</a>
+
+</div>
+
+{% if hosted %}
+<div class="card">
+
+<h2>🏠 Hosted Room</h2>
+
+<p><b>Room:</b> {{ hosted.room_name }}</p>
+<p><b>Rent:</b> ₹{{ hosted.rent }}</p>
+
+{% if hosted.rent_paid %}
+<p style="color:green">Paid on {{ hosted.rent_paid_date }}</p>
+{% else %}
+<p style="color:red">Rent Pending</p>
+<a href="{{ upi_link }}" class="btn-pay">
+    💳 Pay Rent
+</a>
+{% endif %}
+
+</div>
+{% endif %}
+
+</div>
+
+<style>
+.btn-pay{
+background:#25D366;
+color:white;
+padding:12px 20px;
+border-radius:10px;
+text-decoration:none;
+font-weight:600;
+display:inline-block;
+margin-top:10px;
+}
+
+.dashboard{
+max-width:900px;
+margin:40px auto;
+font-family:Poppins;
+}
+
+.card{
+background:white;
+padding:25px;
+margin-top:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn{
+display:inline-block;
+margin-top:10px;
+padding:10px 20px;
+background:#b97a56;
+color:white;
+border-radius:8px;
+text-decoration:none;
+}
+
+</style>
+
+{% endblock %}

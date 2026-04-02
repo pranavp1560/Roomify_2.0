@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Mess Requests{% endblock %}
+
+{% block extra_css %}
+<style>
+.req-page {
+    max-width: 950px;
+    margin: 30px auto;
+    padding: 25px;
+    background: #fffdf9;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+.req-card {
+    background: #ffffff;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border-left: 6px solid #ce9a78;
+}
+.req-card h3 { margin: 0; color: #5c3d2e; }
+
+.req-buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-accept, .btn-reject {
+    padding: 8px 18px;
+    border-radius: 8px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+.btn-accept { background: #4caf50; }
+.btn-reject { background: #d9534f; }
+
+.no-msg {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
+</style>
+{% endblock %}
+
+{% block sidebar_filters %}
+<nav class="sidebar-menu">
+  <a href="{{ url_for('mess.profile') }}">🍽 Dashboard</a>
+  <a href="{{ url_for('mess.profile') }}">🥘 Mess Profile</a>
+  <a href="{{ url_for('mess.view_requests') }}">📩 Requests</a>
+  <a href="{{ url_for('mess.hosted_students') }}">👥 Hosted Students</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="req-page">
+
+    <h2>📩 Mess Join Requests</h2>
+
+    {% if requests and requests|length > 0 %}
+        {% for req in requests %}
+        <div class="req-card">
+
+            <h3>{{ req.student_info.name }}</h3>
+            <p>📱 {{ req.student_info.mobile }}</p>
+            <p>🏠 {{ req.student_info.address }}</p>
+            <p>🎓 {{ req.student_info.college }}</p>
+
+            <p>
+              {% if req.student_info.aadhaar_file and req.student_info.aadhaar_file != "#" %}
+                <a href="{{ req.student_info.aadhaar_file }}" target="_blank">Aadhaar</a>
+              {% endif %}
+
+              {% if req.student_info.college_id_file and req.student_info.college_id_file != "#" %}
+                | <a href="{{ req.student_info.college_id_file }}" target="_blank">College ID</a>
+              {% endif %}
+            </p>
+
+            <div class="req-buttons">
+                <form method="POST"
+                        action="{{ url_for('mess.accept_request', mess_id=mess._id, request_id=req._id) }}">
+                    <button class="btn-accept">✔ Accept</button>
+                </form>
+
+                <form method="POST"
+                        action="{{ url_for('mess.reject_request', mess_id=mess._id, request_id=req._id) }}">
+                    <button class="btn-reject">✖ Reject</button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-msg">No pending requests.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

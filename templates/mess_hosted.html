@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% block title %}Hosted Students - Mess{% endblock %}
+
+
+{% block extra_css %}
+<style>
+    /* ========================= */
+/* GLOBAL PAGE */
+/* ========================= */
+
+.hosted-page {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #fffdf9;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.hosted-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.hosted-header h2 {
+    font-size: 2rem;
+    color: #5c3d2e;
+    font-weight: 700;
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+.hosted-page a {
+    text-decoration: none;
+}
+
+.hosted-page a:hover {
+    opacity: 0.9;
+}
+
+/* ========================= */
+/* TABLE WRAPPER */
+/* ========================= */
+
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+/* ========================= */
+/* TABLE */
+/* ========================= */
+
+.hosted-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.hosted-table thead {
+    background: linear-gradient(135deg, #b97a56, #8d5a3b);
+    color: white;
+}
+
+.hosted-table th {
+    padding: 14px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+}
+
+.hosted-table td {
+    padding: 12px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #eee;
+}
+
+.hosted-table tbody tr:hover {
+    background: #fff4ec;
+    transition: 0.3s;
+}
+
+/* ========================= */
+/* BADGES */
+/* ========================= */
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.paid {
+    background: #2ecc71;
+    color: white;
+}
+
+.mode-online {
+    background: #3498db;
+    color: white;
+}
+
+.mode-offline {
+    background: #f1c40f;
+    color: #333;
+}
+
+/* ========================= */
+/* FORM (RENT) */
+/* ========================= */
+
+.hosted-table td form {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.hosted-table select {
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid #d6b59c;
+    background: #fffaf6;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+.hosted-table button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #b97a56, #8d5a3b);
+    color: white;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.hosted-table button:hover {
+    background: linear-gradient(135deg, #8d5a3b, #6f4228);
+}
+
+/* REMOVE BUTTON */
+
+.hosted-table button[style] {
+    background: #e74c3c !important;
+}
+
+.hosted-table button[style]:hover {
+    background: #c0392b !important;
+}
+
+/* ========================= */
+/* LINKS */
+/* ========================= */
+
+.hosted-table a {
+    color: #b97a56;
+    font-weight: 600;
+}
+
+.hosted-table a:hover {
+    text-decoration: underline;
+}
+
+/* ========================= */
+/* NO DATA */
+/* ========================= */
+
+.hosted-page p {
+    text-align: center;
+    color: #777;
+    font-size: 1rem;
+    padding: 20px;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 768px) {
+
+    .hosted-page {
+        padding: 15px;
+    }
+
+    .hosted-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .hosted-table {
+        min-width: 900px;
+    }
+
+    .hosted-table th,
+    .hosted-table td {
+        padding: 8px;
+        font-size: 0.75rem;
+    }
+
+    .hosted-table td form {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .hosted-table select {
+        width: 100%;
+    }
+
+    .hosted-table button {
+        width: 100%;
+        font-size: 0.7rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+    }
+
+    .hosted-table a {
+        display: block;
+        font-size: 0.7rem;
+    }
+}
+
+/* ========================= */
+/* TABLET */
+/* ========================= */
+
+@media (max-width: 1024px) {
+    .hosted-table th,
+    .hosted-table td {
+        font-size: 0.85rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hosted-page">
+
+    <div class="hosted-header">
+        <h2>👥 Mess Hosted Students</h2>
+    </div>
+
+    <div style="text-align:right;margin-bottom:15px;">
+        <a href="{{ url_for('mess.send_reminder_all') }}"
+           style="background:#25D366;color:white;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:600">
+        📢 Check Unpaid List
+        </a>
+    </div>
+
+    {% if hosted and hosted|length > 0 %}
+    <div class="table-wrapper">
+        <table class="hosted-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>College</th>
+                    <th>Rent Paid</th>
+                    <th>Payment Mode</th>
+                    <th>Rent Paid Date</th>
+                    <th>Date Hosted</th>
+                    <th>Reminder</th>
+                    <th>Documents</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for s in hosted %}
+            <tr>
+
+                <td><strong>{{ s.name }}</strong></td>
+                <td>{{ s.mobile }}</td>
+                <td>{{ s.college }}</td>
+
+                <!-- RENT -->
+                <td>
+                    {% if s.payment_mode == "online" %}
+                        <span class="badge paid">Paid (Online)</span>
+                    {% else %}
+                    <form method="POST"
+                          action="{{ url_for('mess.update_rent_status',
+                                             mess_id=mess._id,
+                                             student_id=s.student_id) }}">
+                        
+                        <select name="rent_paid">
+                            <option value="false" {% if not s.rent_paid %}selected{% endif %}>Unpaid</option>
+                            <option value="true" {% if s.rent_paid %}selected{% endif %}>Paid</option>
+                        </select>
+
+                        <input type="hidden" name="payment_mode" value="offline">
+                        <button type="submit">Save</button>
+                    </form>
+                    {% endif %}
+                </td>
+
+                <!-- MODE -->
+                <td>
+                    {% if s.payment_mode == "online" %}
+                        <span class="badge mode-online">Online</span>
+                    {% elif s.payment_mode == "offline" %}
+                        <span class="badge mode-offline">Offline</span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+
+                <!-- DATE -->
+                <td>{{ s.rent_paid_date or "-" }}</td>
+                <td>{{ s.hosted_date }}</td>
+
+                <!-- WHATSAPP -->
+                <td>
+                    <a href="https://wa.me/91{{ s.mobile }}?text=Hello%20{{ s.name }},%20please%20pay%20your%20mess%20fees."
+                       target="_blank"
+                       class="badge mode-online">
+                       WhatsApp
+                    </a>
+                </td>
+
+                <!-- DOCS -->
+                <td>
+                    <a href="{{ s.aadhaar_file }}">Aadhaar</a> |
+                    <a href="{{ s.college_id_file }}">College ID</a>
+                </td>
+
+                <!-- DELETE -->
+                <td>
+                    <form method="POST"
+                          action="{{ url_for('mess.remove_hosted',
+                                             mess_id=mess._id,
+                                             student_id=s.student_id) }}">
+                        <button style="background:#e74c3c;">Remove</button>
+                    </form>
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>No students yet.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block title %}Mess Sentiment Analysis{% endblock %}
+
+{% block sidebar_filters %}
+<nav class="sidebar-menu">
+  <a href="{{ url_for('mess.profile') }}">🍽 Dashboard</a>
+  <a href="{{ url_for('mess.profile') }}">🥘 Mess Profile</a>
+  <a href="{{ url_for('mess.view_requests') }}">📩 Requests</a>
+  <a href="{{ url_for('mess.hosted_students') }}">👥 Hosted Students</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="sentiment-container">
+
+    <h1 class="title">📊 Sentiment Analysis — {{ mess.name }}</h1>
+    <p class="subtitle">Insights from student reviews and feedback.</p>
+
+    <div class="analysis-section">
+
+        <!-- Chart -->
+        <div class="chart-box">
+            <img 
+                src="{{ url_for('mess.mess_sentiment_chart', mess_id=mess._id) }}"
+                class="sentiment-chart"
+                alt="Sentiment Chart"
+            >
+        </div>
+
+        <!-- Sentiment Cards -->
+        <div class="sentiment-cards">
+
+            <div class="card positive">
+                <div class="icon">😊</div>
+                <div>
+                    <h3>Positive</h3>
+                    <p>{{ positive }} reviews</p>
+                </div>
+            </div>
+
+            <div class="card negative">
+                <div class="icon">😠</div>
+                <div>
+                    <h3>Negative</h3>
+                    <p>{{ negative }} reviews</p>
+                </div>
+            </div>
+
+            <div class="card neutral">
+                <div class="icon">😐</div>
+                <div>
+                    <h3>Neutral</h3>
+                    <p>{{ neutral }} reviews</p>
+                </div>
+            </div>
+
+            <div class="card rating">
+                <div class="icon">⭐</div>
+                <div>
+                    <h3>Average Rating</h3>
+                    <p>{{ avg_rating }}/5</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="text-align:center; margin-top:30px;">
+        <a href="{{ url_for('mess.profile') }}" class="btn-back">⬅ Back to Mess Profile</a>
+    </div>
+
+</div>
+
+<style>
+.sentiment-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 40px;
+    background: linear-gradient(180deg, #fffaf4, #f8ecdf);
+    border-radius: 22px;
+    box-shadow: 0 8px 26px rgba(0,0,0,0.1);
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+.title {
+    text-align: center;
+    font-size: 2rem;
+    color: #5c3d2e;
+    font-weight: 700;
+}
+
+.subtitle {
+    text-align: center;
+    color: #7a5f4c;
+    margin-top: 8px;
+}
+
+.analysis-section {
+    margin-top: 40px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Chart */
+.chart-box {
+    flex: 1;
+    min-width: 320px;
+}
+
+.sentiment-chart {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    border: 4px solid #eacaad;
+}
+
+/* Cards */
+.sentiment-cards {
+    flex: 1;
+    min-width: 330px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border-left: 7px solid #ce9a78;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateX(8px);
+}
+
+.icon { font-size: 2rem; }
+
+.card h3 {
+    margin: 0;
+    color: #5c3d2e;
+}
+
+.card p {
+    margin: 4px 0 0;
+    color: #7a5f4c;
+}
+
+/* Colors */
+.positive { border-left-color: #2ecc71; }
+.negative { border-left-color: #e74c3c; }
+.neutral  { border-left-color: #f1c40f; }
+.rating   { border-left-color: #8d6e63; }
+
+.btn-back {
+    padding: 12px 26px;
+    background: linear-gradient(135deg, #ce9a78, #b97a56);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.btn-back:hover {
+    background: linear-gradient(135deg, #b97a56, #a85d3b);
+    transform: translateY(-3px);
+}
+
+/* Fade Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .analysis-section { flex-direction: column; }
+    .sentiment-chart { max-width: 90%; margin: auto; }
+}
+</style>
+
+{% endblock %}

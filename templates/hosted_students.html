@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% block title %}Hosted Students - Roomify{% endblock %}
+
+{% block extra_css %}
+<style>
+.hosted-page {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 25px;
+    background: #fffdf9;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    font-family: 'Poppins', sans-serif;
+}
+
+.hosted-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.hosted-header h2 {
+    font-size: 2rem;
+    color: #5c3d2e;
+}
+
+/* TABLE */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.hosted-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.hosted-table thead {
+    background: #b97a56;
+    color: white;
+}
+
+.hosted-table th,
+.hosted-table td {
+    padding: 12px 14px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95rem;
+}
+
+.hosted-table tbody tr:hover {
+    background: #fff4ec;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.paid {
+    background: #2ecc71;
+    color: white;
+}
+
+.unpaid {
+    background: #e74c3c;
+    color: white;
+}
+
+.mode-online {
+    background: #3498db;
+    color: white;
+}
+
+.mode-offline {
+    background: #f1c40f;
+    color: #333;
+}
+
+.no-students {
+    text-align: center;
+    color: #777;
+    font-size: 1.1rem;
+    padding: 30px;
+}
+
+/* Sidebar */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #5c3d2e;
+}
+
+
+/* Rent status form */
+.hosted-table td form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Dropdown */
+.hosted-table td select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #d6b59c;
+    background: #fffaf6;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #5c3d2e;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.hosted-table td select:hover {
+    border-color: #b97a56;
+    background: #fff4ec;
+}
+
+.hosted-table td select:focus {
+    border-color: #b97a56;
+    box-shadow: 0 0 0 2px rgba(185, 122, 86, 0.25);
+}
+
+/* Save button */
+.hosted-table td button {
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #b97a56, #8d5a3b);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.hosted-table td button:hover {
+    background: linear-gradient(135deg, #8d5a3b, #6f4228);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.hosted-table td button:active {
+    transform: scale(0.97);
+}
+
+/* Disabled look (if you later add disabled state) */
+.hosted-table td button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+</style>
+{% endblock %}
+
+{% block sidebar_filters %}
+<nav class="sidebar-menu">
+  <a href="{{ url_for('room.profile') }}">🏠 Dashboard</a>
+  <a href="{{ url_for('room.profile') }}">🛏 Rooms</a>
+  <a href="{{ url_for('room.hosted_students') }}">👥 Hosted Students</a>
+  <a href="{{ url_for('room.requests_page') }}">📩 Requests</a>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="hosted-page">
+
+    <div class="hosted-header">
+        <h2>👥 Hosted Students</h2>
+    </div>
+
+    <div style="text-align:right;margin-bottom:15px;">
+
+        <a href="{{ url_for('room.send_reminder_all') }}"
+           style="background:#25D366;color:white;padding:10px 20px;border-radius:10px;text-decoration:none;font-weight:600">
+        
+        📢 Cheak Unpaid List
+        
+        </a>
+        
+        </div>
+
+    {% if hosted_students and hosted_students|length > 0 %}
+    <div class="table-wrapper">
+        <table class="hosted-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>College</th>
+                    <th>Rent Paid</th>
+                    <th>Payment Mode</th>
+                    <th>Rent Paid Date</th>
+                    <th>Date Hosted</th>
+                    <th>Reminder</th>
+                    <th>Documents</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for s in hosted_students %}
+                <tr>
+                    <td><strong>{{ s.name }}</strong></td>
+                    <td>{{ s.mobile }}</td>
+                    <td>{{ s.college }}</td>
+
+                    <td>
+                        {% if s.payment_locked %}
+                            <span class="badge paid">Paid (Online)</span>
+                        {% else %}
+                        <form method="POST"
+                                action="{{ url_for('room.update_rent',
+                                                room_id=room._id,
+                                                student_id=s.student_id) }}">
+                        
+                            <select name="rent_paid">
+                                <option value="false" {% if not s.rent_paid %}selected{% endif %}>Unpaid</option>
+                                <option value="true" {% if s.rent_paid %}selected{% endif %}>Paid</option>
+                            </select>
+                        
+                            <input type="hidden" name="payment_mode" value="offline">
+                            <button type="submit">Save</button>
+                        </form>
+                        {% endif %}
+                      </td>
+                      
+
+                    <td>
+                        {% if s.payment_mode == "online" %}
+                            <span class="badge mode-online">Online</span>
+                        {% elif s.payment_mode == "offline" %}
+                            <span class="badge mode-offline">Offline</span>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if s.rent_paid_date %}
+                            {{ s.rent_paid_date }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>{{ s.hosted_date }}</td>
+
+                    <td>
+                        <a href="https://wa.me/91{{ s.mobile }}?text=Hello%20{{ s.name }},%20please%20pay%20your%20room%20rent."
+                           target="_blank"
+                           class="badge mode-online">
+                           WhatsApp
+                        </a>
+                        </td>
+
+                    <td>
+                        <a href="{{ s.aadhaar_file }}" target="_blank">Aadhaar</a> |
+                        <a href="{{ s.college_id_file }}" target="_blank">College ID</a>
+                    </td>
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('room.remove_student',
+                                                 room_id=room._id,
+                                                 student_id=s.student_id) }}">
+                            <button style="background:#e74c3c;">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="no-students">No students currently staying in this room.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

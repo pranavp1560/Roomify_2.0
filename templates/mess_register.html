@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Mess' if edit else 'Add Mess' }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-container {
+  max-width: 750px;
+  margin: 2rem auto;
+  background: #fffdf9;
+  padding: 2rem;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #5c3d2e;
+  margin-bottom: 20px;
+}
+
+label {
+  margin-top: 15px;
+  font-weight: 600;
+  color: #5c3d2e;
+  display: block;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1b7a3;
+  border-radius: 10px;
+  margin-top: 6px;
+  background: #fff;
+}
+
+.checkbox-section {
+  margin-top: 25px;
+  padding: 18px;
+  background: #fffdf9;
+  border-radius: 12px;
+  border: 1px solid #f1dec9;
+}
+
+.checkbox-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: #faf5f1;
+  border-radius: 8px;
+  border: 1px solid #e4cbb5;
+  font-weight: 600;
+}
+
+.other-input {
+  display: none;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid #d1b7a3;
+  border-radius: 10px;
+}
+
+.btn-submit {
+  margin-top: 25px;
+  padding: 14px;
+  width: 100%;
+  background: linear-gradient(135deg, #ce9a78, #b97a56);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+
+  <h2 class="form-title">{{ 'Edit Mess' if edit else 'Add Your Mess' }}</h2>
+
+  <form method="POST">
+
+    <label>Mess Name</label>
+    <input type="text" name="name" value="{{ mess.name if edit }}" required>
+
+    <label>Veg / Non-Veg</label>
+    <select name="type">
+      {% set t = mess.type if edit else '' %}
+      <option value="Veg"  {% if t=='Veg' %}selected{% endif %}>Veg</option>
+      <option value="Non-Veg" {% if t=='Non-Veg' %}selected{% endif %}>Non-Veg</option>
+      <option value="Both" {% if t=='Both' %}selected{% endif %}>Both</option>
+    </select>
+
+    <label>Monthly Charge (₹)</label>
+    <input type="number" name="monthly_charge" 
+           value="{{ mess.monthly_charge if edit }}" required>
+
+    <label>Address</label>
+    <textarea name="address" required>{{ mess.address if edit }}</textarea>
+
+    <label>Food Type</label>
+    {% set ft = mess.food_type if edit else '' %}
+    <select name="food_type">
+      <option value="Tiffin System" {% if ft=='Tiffin System' %}selected{% endif %}>Tiffin System</option>
+      <option value="Dining Hall" {% if ft=='Dining Hall' %}selected{% endif %}>Dining Hall</option>
+    </select>
+
+    <label>For</label>
+    {% set fg = mess.for_gender if edit else '' %}
+    <select name="for_gender">
+      <option value="boys" {% if fg=='boys' %}selected{% endif %}>Boys</option>
+      <option value="girls" {% if fg=='girls' %}selected{% endif %}>Girls</option>
+      <option value="both" {% if fg=='both' %}selected{% endif %}>Both</option>
+    </select>
+
+    <!-- Facilities -->
+    <div class="checkbox-section">
+      <h3>Facilities</h3>
+
+      <div class="checkbox-group">
+        {% set selected = mess.features if edit else [] %}
+        {% set items = ["Breakfast","Lunch","Dinner","Wi-Fi","Filtered Water","Seating Area","TV","Other"] %}
+
+        {% for f in items %}
+          <label>
+            <input type="checkbox" name="features" value="{{ f }}"
+                   {% if f in selected %}checked{% endif %}
+                   onclick="toggleOtherInput(this, 'facilityOther')">
+            {{ f }}
+          </label>
+        {% endfor %}
+      </div>
+
+      <input type="text" id="facilityOther" class="other-input"
+             name="feature_other" placeholder="Other facility"
+             value="{{ mess.feature_other if edit }}">
+    </div>
+
+    <!-- Rules -->
+    <div class="checkbox-section">
+      <h3>Rules</h3>
+
+      <div class="checkbox-group">
+        {% set selected_rules = mess.rules if edit else [] %}
+        {% set rls = ["Maintain cleanliness","Be punctual for meals","Respect staff","No outside food allowed","Other"] %}
+
+        {% for r in rls %}
+          <label>
+            <input type="checkbox" name="rules" value="{{ r }}"
+                   {% if r in selected_rules %}checked{% endif %}
+                   onclick="toggleOtherInput(this, 'ruleOther')">
+            {{ r }}
+          </label>
+        {% endfor %}
+      </div>
+
+      <input type="text" id="ruleOther" class="other-input"
+             name="rule_other" placeholder="Other rule"
+             value="{{ mess.rule_other if edit }}">
+    </div>
+
+    <button type="submit" class="btn-submit">
+      {{ 'Update Mess' if edit else 'Add Mess' }}
+    </button>
+
+  </form>
+</div>
+
+<script>
+function toggleOtherInput(checkbox, inputId) {
+  const input = document.getElementById(inputId);
+  if (checkbox.value === "Other") {
+    input.style.display = checkbox.checked ? "block" : "none";
+    if (!checkbox.checked) input.value = "";
+  }
+}
+</script>
+
+{% endblock %}

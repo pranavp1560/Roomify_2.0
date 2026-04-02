@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Room Profile - Roomify{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .profile-header h1 {
+    color: #5c3d2e;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+  }
+
+  .profile-header p {
+    font-size: 1.1rem;
+    color: #7a5f4c;
+  }
+
+  .profile-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    margin-top: 25px;
+    text-align: left;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  label {
+    font-weight: 600;
+    color: #5c3d2e;
+    margin-bottom: 6px;
+  }
+
+  input, select, textarea {
+    padding: 12px;
+    border: 1px solid #d1b7a3;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 0.95rem;
+  }
+
+  textarea { resize: none; min-height: 90px; }
+
+  .checkbox-section {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #fffdf9;
+    border: 1px solid #f1dec9;
+  }
+
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+    gap: 8px;
+  }
+
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #faf5f1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #e4cbb5;
+  }
+
+  .btn-submit {
+    margin-top: 25px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #ce9a78, #b97a56);
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-action {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #ce9a78, #eacaad);
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  #addRoomForm { display: none; }
+</style>
+{% endblock %}
+
+
+{% block sidebar_filters %}
+<nav class="sidebar-menu">
+  <a href="{{ url_for('room.profile') }}">🏠 Dashboard</a>
+  <a href="{{ url_for('room.profile') }}">🛏 Rooms</a>
+  <a href="/pro">🎓 Student Info</a>
+  <a href="{{ url_for('room.requests_page') }}">📩 Requests</a>
+</nav>
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-page">
+
+  <div class="profile-header">
+    <h1>Hello, {{ user.name }} 👋</h1>
+    <p>Manage your Rooms on Roomify</p>
+  </div>
+
+  <div class="profile-actions">
+    {% if existing_room %}
+      <a href="{{ url_for('room.edit_room', room_id=existing_room._id) }}" class="btn-action">✏️ Edit Room</a>
+    {% else %}
+      <button class="btn-action" onclick="toggleForm()">➕ Add Room</button>
+    {% endif %}
+  </div>
+
+  <!-- Add Room Form -->
+  <div id="addRoomForm" class="profile-card">
+    <h2>Add New Room</h2>
+
+    <form method="POST" action="{{ url_for('room.add_room') }}">
+
+      <div class="form-grid">
+        <div>
+          <label>Room Name</label>
+          <input type="text" name="name" required>
+        </div>
+        
+        <div class="form-group">
+          <label>Owner Mobile</label>
+          <input type="text" name="owner_mobile" value="{{ owner.mobile }}" required>
+      </div>
+      
+        <div>
+          <label>Rent (₹)</label>
+          <input type="number" name="rent" required>
+        </div>
+
+        <div>
+          <label>UPI_ID </label>
+          <input type="text" name="upi_id" required>
+        </div>
+
+        <div>
+          <label>Total Capacity</label>
+          <input type="number" name="capacity" required>
+        </div>
+
+        <div>
+          <label>Available Seats</label>
+          <input type="number" name="available" required>
+        </div>
+
+        <div>
+          <label>Address</label>
+          <textarea name="address" required></textarea>
+        </div>
+
+        <div>
+          <label>For Gender</label>
+          <select name="for_gender" required>
+            <option value="boys">Boys</option>
+            <option value="girls">Girls</option>
+            <option value="both">Both</option>
+          </select>
+        </div>
+        <div>
+          <label>Room Type</label>
+          <select name="room_type" required>
+              <option value="cot basis">Cot Basis</option>
+              <option value="flat">Flat</option>
+              <option value="both">Both (Cot + Flat)</option>
+          </select>
+        </div>
+        
+      </div>
+
+      <!-- FEATURES -->
+      <div class="checkbox-section">
+        <h3>Features</h3>
+        <div class="checkbox-group">
+          {% set features_list = ["Bed","Locker","Study Table","Lights","Fan","Wi-Fi","Hot & Cold Water","Attached Bathroom","Common Bathroom","Regular Cleaning","Other"] %}
+          {% for f in features_list %}
+            <label>
+              <input type="checkbox" name="features" value="{{ f }}" onclick="toggleOtherInput(this, 'featureOther')">
+              {{ f }}
+            </label>
+          {% endfor %}
+        </div>
+        <input type="text" id="featureOther" name="feature_other" placeholder="Enter other feature"
+               style="display:none; margin-top:10px;">
+      </div>
+
+      <!-- RULES -->
+      <div class="checkbox-section">
+        <h3>Rules</h3>
+        <div class="checkbox-group">
+          {% set rules_list = ["Maintain cleanliness","Respect roommates","No loud noise","No visitors","No alcohol/smoking","Switch off appliances","Report issues","Other"] %}
+          {% for r in rules_list %}
+            <label>
+              <input type="checkbox" name="rules" value="{{ r }}" onclick="toggleOtherInput(this, 'ruleOther')">
+              {{ r }}
+            </label>
+          {% endfor %}
+        </div>
+        <input type="text" id="ruleOther" name="rule_other" placeholder="Enter other rule"
+               style="display:none; margin-top:10px;">
+      </div>
+
+      <button type="submit" class="btn-submit">✅ Submit Room</button>
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+function toggleForm() {
+  const form = document.getElementById("addRoomForm");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
+
+function toggleOtherInput(checkbox, id) {
+  const box = document.getElementById(id);
+  if (checkbox.value === "Other") {
+    box.style.display = checkbox.checked ? "block" : "none";
+    if (!checkbox.checked) box.value = "";
+  }
+}
+</script>
+{% endblock %}
