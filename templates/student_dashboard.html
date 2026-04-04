@@ -39,6 +39,27 @@
 </div>
 {% endif %}
 
+
+{% if hosted_mess %}
+<div class="card">
+
+<h2>🍽️ Hosted Mess</h2>
+
+<p><b>Mess:</b> {{ hosted_mess.mess_name }}</p>
+<p><b>Monthly Fee:</b> ₹{{ hosted_mess.monthly_charge }}</p>
+
+{% if hosted_mess.paid %}
+<p style="color:green">Paid on {{ hosted_mess.paid_date }}</p>
+{% else %}
+<p style="color:red">Mess Fee Pending</p>
+<a href="{{ upi_mess_link }}" class="btn-pay">
+    💳 Pay Mess Fee
+</a>
+{% endif %}
+
+</div>
+{% endif %}
+
 </div>
 
 <style>
