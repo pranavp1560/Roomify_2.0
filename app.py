@@ -144,7 +144,12 @@ def login(role):
             elif role == "student":
                 return redirect(url_for("student_page"))
 
+        # ❌ ADD THIS BLOCK (IMPORTANT)
+        else:
+            flash("Wrong credentials!", "danger")
+
     return render_template("login.html", role=role)
+
 
 
 # ====================================
