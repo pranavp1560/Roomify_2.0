@@ -231,6 +231,7 @@ def delete_image(room_id):
 #     flash("Request sent!", "success")
 #     return redirect(url_for("student.room_details", room_id=room_id))
 
+
 @room_bp.route("/apply/<room_id>", methods=["GET","POST"])
 def apply_room(room_id):
 
@@ -240,6 +241,20 @@ def apply_room(room_id):
 
     student_id = str(session["user_id"])
     student = students().find_one({"_id": ObjectId(student_id)})
+
+    room = rooms().find_one({"_id": ObjectId(room_id)})
+
+    # 🔥 CHECK: already hosted
+    for h in room.get("hosted_students", []):
+        if h["student_id"] == student_id:
+            flash("You are already staying in this room!", "info")
+            return redirect(url_for("student.room_details", room_id=room_id))
+
+    # 🔥 CHECK: already applied
+    for req in room.get("requests", []):
+        if req["student_id"] == student_id and req["status"] == "pending":
+            flash("You have already applied for this room!", "info")
+            return redirect(url_for("student.room_details", room_id=room_id))
 
     # If profile not completed
     if not student.get("student_info"):
@@ -262,6 +277,7 @@ def apply_room(room_id):
 
     flash("Room request sent successfully!", "success")
     return redirect(url_for("student.room_details", room_id=room_id))
+
 
 
 # ====================================================
