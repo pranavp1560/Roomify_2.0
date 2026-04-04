@@ -91,15 +91,20 @@
       <strong>{{ rev.student_name }}</strong>
       <span class="rating">⭐ {{ rev.rating }}/5</span>
     
-      {% if rev.sentiment %}
-        <span class="sentiment-badge 
-          {% if rev.sentiment == 'Positive' %}sentiment-positive
-          {% elif rev.sentiment == 'Neutral' %}sentiment-neutral
-          {% else %}sentiment-negative
-          {% endif %}
-        ">
-          {{ rev.sentiment }}
-        </span>
+            {% set sentiment = rev.sentiment %}
+
+            {% if sentiment is mapping %}
+                {% set sentiment = sentiment['sentiment'] %}
+            {% endif %}
+            
+            <span class="sentiment-badge 
+                {% if sentiment|lower == 'positive' %}sentiment-positive
+                {% elif sentiment|lower == 'neutral' %}sentiment-neutral
+                {% else %}sentiment-negative
+                {% endif %}
+            ">
+                {{ sentiment|capitalize }}
+            </span>
       {% endif %}
     
       <p class="review-comment">{{ rev.comment }}</p>
