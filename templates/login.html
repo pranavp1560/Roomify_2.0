@@ -6,7 +6,7 @@
     <title>{{ role|capitalize }} Login - Roomify</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             margin: 0;
@@ -166,6 +166,17 @@
         </div>
 
     </div>
-
+    <script>
+        const messages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson | safe }}');
+        
+        messages.forEach(([category, message]) => {
+            Swal.fire({
+                icon: category === "success" ? "success" : 
+                      category === "danger" ? "error" : "info",
+                title: message,
+                confirmButtonColor: "#ce9a78"
+            });
+        });
+    </script>
 </body>
 </html>
