@@ -162,6 +162,7 @@ def delete_mess_image(mess_id):
 # ======================================================
 @mess.route("/apply/<mess_id>", methods=["POST"])
 def apply_mess(mess_id):
+
     if session.get("role") != "student":
         flash("Login as student!", "warning")
         return redirect(url_for("login", role="student"))
@@ -175,10 +176,16 @@ def apply_mess(mess_id):
         flash("Mess not found!", "danger")
         return redirect(url_for("student_page"))
 
-    # Prevent duplicate request
+    # 🔥 CHECK: already hosted
+    for h in m.get("hosted_students", []):
+        if h["student_id"] == student_id:
+            flash("You are already enrolled in this mess!", "info")
+            return redirect(url_for("student.mess_details", mess_id=mess_id))
+
+    # 🔥 CHECK: already applied
     for req in m.get("requests", []):
-        if req["student_id"] == student_id:
-            flash("Already applied!", "info")
+        if req["student_id"] == student_id and req["status"] == "pending":
+            flash("You have already applied for this mess!", "info")
             return redirect(url_for("student.mess_details", mess_id=mess_id))
 
     request_entry = {
@@ -194,7 +201,7 @@ def apply_mess(mess_id):
         {"$push": {"requests": request_entry}}
     )
 
-    flash("Application sent!", "success")
+    flash("Application sent successfully!", "success")
     return redirect(url_for("student.mess_details", mess_id=mess_id))
 
 
