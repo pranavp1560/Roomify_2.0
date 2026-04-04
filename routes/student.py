@@ -42,8 +42,11 @@ sia = SentimentIntensityAnalyzer()
 #         rooms=rooms_list,
 #         messes=messes_list
 #     )
+
 @student.route("/dashboard")
 def dashboard():
+
+    reset_monthly_payments()
 
     if session.get("role") != "student":
         flash("Login required.", "warning")
@@ -53,7 +56,9 @@ def dashboard():
 
     user = students().find_one({"_id": ObjectId(student_id)})
 
-    # Find hosted room
+    # =========================
+    # HOSTED ROOM
+    # =========================
     room = rooms().find_one({"hosted_students.student_id": student_id})
 
     hosted = None
@@ -70,7 +75,7 @@ def dashboard():
                     "rent_paid_date": s.get("rent_paid_date")
                 }
 
-                # Generate UPI payment link
+                # UPI for room
                 upi = room.get("upi_id")
                 rent = room.get("rent")
 
@@ -79,12 +84,43 @@ def dashboard():
 
                 break
 
+    # =========================
+    # 🔥 HOSTED MESS (NEW)
+    # =========================
+    mess = messes().find_one({"hosted_students.student_id": student_id})
+
+    hosted_mess = None
+    upi_mess_link = None
+
+    if mess:
+        for s in mess.get("hosted_students", []):
+            if s["student_id"] == student_id:
+
+                hosted_mess = {
+                    "mess_name": mess.get("name"),
+                    "monthly_charge": mess.get("monthly_charge"),
+                    "paid": s.get("paid"),
+                    "paid_date": s.get("paid_date")
+                }
+
+                # UPI for mess (if you store it)
+                upi = mess.get("upi_id")
+                amount = mess.get("monthly_charge")
+
+                if upi and amount:
+                    upi_mess_link = f"upi://pay?pa={upi}&pn=MessOwner&am={amount}&cu=INR"
+
+                break
+
     return render_template(
         "student_dashboard.html",
         user=user,
         hosted=hosted,
-        upi_link=upi_link
+        hosted_mess=hosted_mess,   # 🔥 NEW
+        upi_link=upi_link,
+        upi_mess_link=upi_mess_link  # 🔥 NEW
     )
+
 
 
 # =====================================================
@@ -182,6 +218,7 @@ def room_details(room_id):
         avg_rating=avg_rating,
         owner_mobile=owner_mobile
     )
+
 
 
 
@@ -326,3 +363,57 @@ def view_sentiment_student(item_type, item_id):
         total=total_reviews,
         chart_url=chart_url
     )
+
+
+
+def reset_monthly_payments():
+    today = datetime.now()
+    current_month = today.strftime("%Y-%m")
+
+    reset_done = False   # 🔥 track if reset happened
+
+    # =========================
+    # ROOM RESET
+    # =========================
+    for room in rooms().find():
+        updated = False
+
+        for s in room.get("hosted_students", []):
+            last_paid = s.get("rent_paid_date", "")
+
+            if not last_paid.startswith(current_month):
+                if s.get("rent_paid"):   # only reset if previously paid
+                    s["rent_paid"] = False
+                    updated = True
+                    reset_done = True
+
+        if updated:
+            rooms().update_one(
+                {"_id": room["_id"]},
+                {"$set": {"hosted_students": room["hosted_students"]}}
+            )
+
+    # =========================
+    # MESS RESET
+    # =========================
+    for mess in messes().find():
+        updated = False
+
+        for s in mess.get("hosted_students", []):
+            last_paid = s.get("paid_date", "")
+
+            if not last_paid.startswith(current_month):
+                if s.get("paid"):
+                    s["paid"] = False
+                    updated = True
+                    reset_done = True
+
+        if updated:
+            messes().update_one(
+                {"_id": mess["_id"]},
+                {"$set": {"hosted_students": mess["hosted_students"]}}
+            )
+
+    # 🔥 ADD POPUP HERE
+    if reset_done:
+        flash("New month started! Please pay your rent/mess fee.", "info")
