@@ -179,7 +179,23 @@
 
   </div>
 </div>
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+    const messages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson | safe }}');
+
+    messages.forEach(([category, message]) => {
+        Swal.fire({
+            icon: category === "success" ? "success" :
+                  category === "danger" ? "error" : "info",
+            title: message,
+            confirmButtonColor: "#ce9a78",
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+</script>
 <!-- CSS Styling -->
 <style>
 .mess-details-wrapper {
