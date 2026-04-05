@@ -256,3 +256,45 @@
   }
 
 }
+
+.rating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card {
+  position: relative;
+}
+
+.rating {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.stars {
+  color: #FFD700; /* gold */
+  font-size: 14px;
+}
+
+.rating-number {
+  margin-left: 5px;
+  color: #333;
+}
+
+.no-rating {
+  color: #888;
+}
