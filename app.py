@@ -74,13 +74,54 @@ def student_page():
         flash("Please log in as a student first.", "warning")
         return redirect(url_for("login", role="student"))
 
-    rooms_list = list(rooms().find())
-    messes_list = list(messes().find())
+    # =========================
+    # ROOMS WITH RATING
+    # =========================
+    rooms_list = []
+    for r in rooms().find():
 
-    return render_template("student_page.html", 
-                           user=user, 
-                           rooms=rooms_list, 
-                           messes=messes_list)
+        reviews = r.get("reviews", [])
+        total = 0
+        count = 0
+
+        for rev in reviews:
+            rating = rev.get("rating")
+            if rating is not None:
+                total += int(rating)
+                count += 1
+
+        r["avg_rating"] = round(total / count, 1) if count > 0 else None
+        rooms_list.append(r)
+        rooms_list.sort(key=lambda x: x.get("avg_rating") or 0, reverse=True)
+        
+
+    # =========================
+    # MESSES WITH RATING
+    # =========================
+    messes_list = []
+    for m in messes().find():
+
+        reviews = m.get("reviews", [])
+        total = 0
+        count = 0
+
+        for rev in reviews:
+            rating = rev.get("rating")
+            if rating is not None:
+                total += int(rating)
+                count += 1
+
+        m["avg_rating"] = round(total / count, 1) if count > 0 else None
+        messes_list.append(m)
+        messes_list.sort(key=lambda x: x.get("avg_rating") or 0, reverse=True)
+
+    return render_template(
+        "student_page.html",
+        user=user,
+        rooms=rooms_list,
+        messes=messes_list
+    )
+
 
 
 # ====================================
