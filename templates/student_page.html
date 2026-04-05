@@ -90,6 +90,25 @@
         {% else %}
         <img src="{{ url_for('static', filename='img/room.jpg') }}">
         {% endif %}
+        <p class="rating">
+          <div class="rating">
+            {% if room.avg_rating %}
+                <span class="stars">
+                    {% for i in range(1,6) %}
+                        {% if i <= room.avg_rating %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="rating-number">{{ room.avg_rating }}</span>
+            {% else %}
+                <span class="no-rating">No Rating</span>
+            {% endif %}
+        </div>
+      </p>
+      
 
         <div class="card-body">
           <h4>{{ room.name }}</h4>
@@ -100,8 +119,9 @@
           <a href="{{ url_for('room_details', room_id=room._id) }}" class="btn">
             View Details
           </a>
+          
         </div>
-
+       
       </div>
       {% endfor %}
 
@@ -120,6 +140,24 @@
         {% else %}
         <img src="{{ url_for('static', filename='img/mess.jpg') }}">
         {% endif %}
+        <p class="rating">
+          <div class="rating">
+            {% if m.avg_rating %}
+                <span class="stars">
+                    {% for i in range(1,6) %}
+                        {% if i <= m.avg_rating %}
+                            ★
+                        {% else %}
+                            ☆
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <span class="rating-number">{{ m.avg_rating }}</span>
+            {% else %}
+                <span class="no-rating">No Rating</span>
+            {% endif %}
+        </div>
+      </p>
 
         <div class="card-body">
           <h4>{{ m.name }}</h4>
