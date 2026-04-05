@@ -162,15 +162,28 @@ def search():
         room_query["rent"] = {"$gte": 2000}
         mess_query["monthly_charge"] = {"$gte": 2000}
 
-    rooms_list = list(rooms().find(room_query)) if include_rooms else []
-    messes_list = list(messes().find(mess_query)) if include_messes else []
+    rooms_list = []
+    if include_rooms:
+        for r in rooms().find(room_query):
+            reviews = r.get("reviews", [])
+            avg_rating = round(sum(int(x["rating"]) for x in reviews) / len(reviews), 1) if reviews else 0
+            r["avg_rating"] = avg_rating
+            print("ROOM REVIEWS:", r.get("reviews"))
+            rooms_list.append(r)
+
+    messes_list = []
+    if include_messes:
+        for m in messes().find(mess_query):
+
+            reviews = m.get("reviews", [])
+            avg_rating = round(sum(int(x["rating"]) for x in reviews) / len(reviews), 1) if reviews else 0
+            m["avg_rating"] = avg_rating
+            messes_list.append(m)
 
     return render_template("student_page.html",
                            user=session["user"],
                            rooms=rooms_list,
                            messes=messes_list)
-
-
 # =====================================================
 # ROOM DETAILS
 # =====================================================
