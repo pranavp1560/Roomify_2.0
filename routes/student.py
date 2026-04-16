@@ -80,7 +80,7 @@ def dashboard():
                 rent = room.get("rent")
 
                 if upi and rent:
-                    upi_link = f"upi://pay?pa={upi}&pn=RoomOwner&am={rent}&cu=INR"
+                    upi_link = f"upi://pay?pa={upi}&pn={room.get('name')}&am={rent}&cu=INR&tn=Room Rent Payment"
 
                 break
 
@@ -108,7 +108,7 @@ def dashboard():
                 amount = mess.get("monthly_charge")
 
                 if upi and amount:
-                    upi_mess_link = f"upi://pay?pa={upi}&pn=MessOwner&am={amount}&cu=INR"
+                    upi_mess_link = f"upi://pay?pa={upi}&pn={mess.get('name')}&am={amount}&cu=INR&tn=Mess Fee Payment"
 
                 break
 
