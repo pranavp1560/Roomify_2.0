@@ -59,9 +59,15 @@ role_pages = {
 # Routes
 # ===========================
 
+
 @app.route('/')
 def first():
-    return render_template('select_role.html')
+    return render_template('about.html')
+
+
+@app.route('/select-role')
+def select_role():
+    return render_template("select_role.html")
 
 
 # ====================================
